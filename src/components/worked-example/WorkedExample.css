@@ -1,0 +1,143 @@
+/* ── Worked Example ─────────────────────────────────────────────── */
+
+.worked-example {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── Agent cards row ───────────────────────────────────────────── */
+
+.we-agents {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+}
+
+.we-agent-card {
+  flex: 1;
+  padding: var(--space-5);
+  transition: all var(--dur-normal) var(--ease-out);
+}
+
+.we-agent-card--converged {
+  border-color: var(--color-match);
+  background: linear-gradient(to bottom, var(--color-match-bg), var(--bg-surface));
+}
+
+.we-agent-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.we-agent-card__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.we-agent-card__label {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.we-agent-card__sequences {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.we-seq {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.we-seq__label {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.we-seq__values {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.we-agent-card__metrics {
+  display: flex;
+  gap: var(--space-6);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-light);
+}
+
+.stat__value--zero {
+  color: var(--color-match);
+}
+
+/* ── Exchange arrow ────────────────────────────────────────────── */
+
+.we-exchange-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  flex-shrink: 0;
+}
+
+.we-arrows {
+  font-size: var(--text-2xl);
+  color: var(--color-exchange);
+  font-weight: 300;
+}
+
+.we-check {
+  font-size: var(--text-2xl);
+  color: var(--color-match);
+  font-weight: 700;
+}
+
+/* ── Grid card ─────────────────────────────────────────────────── */
+
+.we-grid {
+  /* inherits .card */
+}
+
+/* ── Controls ──────────────────────────────────────────────────── */
+
+.we-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.we-status {
+  display: flex;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .we-agents {
+    flex-direction: column;
+  }
+
+  .we-exchange-arrow {
+    min-width: auto;
+    min-height: 32px;
+  }
+
+  .we-arrows {
+    transform: rotate(90deg);
+  }
+}

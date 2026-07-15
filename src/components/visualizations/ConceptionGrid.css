@@ -1,0 +1,204 @@
+/* ── Conception Grid ────────────────────────────────────────────── */
+
+.conception-grid-wrapper {
+  width: 100%;
+}
+
+.conception-grid-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.conception-grid {
+  border-collapse: separate;
+  border-spacing: 2px;
+  width: 100%;
+  min-width: max-content;
+}
+
+/* ── Headers ───────────────────────────────────────────────────── */
+
+.cg-header {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-tertiary);
+  padding: var(--space-2) var(--space-2);
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.cg-header--agent {
+  text-align: left;
+  min-width: 60px;
+}
+
+.cg-header--index {
+  min-width: 44px;
+}
+
+.cg-header--dist {
+  min-width: 56px;
+}
+
+/* ── Rows ──────────────────────────────────────────────────────── */
+
+.cg-row {
+  transition: opacity var(--dur-normal) var(--ease-out);
+}
+
+.cg-row--converged {
+  opacity: 0.6;
+}
+
+.cg-row--converged:hover {
+  opacity: 1;
+}
+
+/* ── Agent label ───────────────────────────────────────────────── */
+
+.cg-agent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-3);
+  white-space: nowrap;
+}
+
+.cg-agent__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ── Cells ─────────────────────────────────────────────────────── */
+
+.cg-cell {
+  position: relative;
+  text-align: center;
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius-xs);
+  transition: all var(--dur-normal) var(--ease-out);
+  min-width: 44px;
+  min-height: 40px;
+  vertical-align: middle;
+}
+
+.cg-cell__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  font-weight: 600;
+  display: block;
+  line-height: 1.2;
+}
+
+.cg-cell__ideal {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-tertiary);
+  display: block;
+  line-height: 1;
+  margin-top: 1px;
+  opacity: 0.65;
+}
+
+/* Match — green */
+.cg-cell--match {
+  background: var(--color-match-bg);
+}
+
+.cg-cell--match .cg-cell__value {
+  color: var(--color-match);
+}
+
+/* Diverge — subtle rose */
+.cg-cell--diverge {
+  background: var(--color-diverge-bg);
+}
+
+.cg-cell--diverge .cg-cell__value {
+  color: var(--color-diverge);
+}
+
+/* Min-k — emphasized amber */
+.cg-cell--min-k {
+  background: var(--color-exchange-bg);
+  box-shadow: inset 0 0 0 2px var(--color-exchange);
+}
+
+.cg-cell--min-k .cg-cell__value {
+  color: hsl(38, 60%, 32%);
+  font-weight: 700;
+}
+
+/* Just exchanged — animated pop */
+.cg-cell--exchanged {
+  animation: sequenceShift var(--dur-slow) var(--ease-spring) both;
+}
+
+/* ── Distance column ───────────────────────────────────────────── */
+
+.cg-dist {
+  text-align: center;
+  padding: var(--space-2) var(--space-3);
+}
+
+.cg-dist__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.cg-dist__value--zero {
+  color: var(--color-match);
+  font-weight: 600;
+}
+
+/* ── Legend ─────────────────────────────────────────────────────── */
+
+.cg-legend {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-light);
+}
+
+.cg-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.cg-legend__item--note {
+  margin-left: auto;
+}
+
+.cg-legend__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.cg-legend__swatch--match {
+  background: var(--color-match-bg);
+  border: 1px solid var(--color-match);
+}
+
+.cg-legend__swatch--min-k {
+  background: var(--color-exchange-bg);
+  border: 2px solid var(--color-exchange);
+}
+
+.cg-legend__swatch--diverge {
+  background: var(--color-diverge-bg);
+  border: 1px solid hsl(350, 40%, 80%);
+}

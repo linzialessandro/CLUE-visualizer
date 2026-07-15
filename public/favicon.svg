@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Two overlapping circles representing cooperative agents -->
+  <circle cx="12" cy="16" r="9" fill="none" stroke="#2d5ba0" stroke-width="2" opacity="0.85"/>
+  <circle cx="20" cy="16" r="9" fill="none" stroke="#2d9e5f" stroke-width="2" opacity="0.85"/>
+  <!-- Exchange arrows in the intersection -->
+  <path d="M14 13.5 L18 13.5 M16.5 11.5 L18 13.5 L16.5 15.5" fill="none" stroke="#d4952e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18 18.5 L14 18.5 M15.5 16.5 L14 18.5 L15.5 20.5" fill="none" stroke="#d4952e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

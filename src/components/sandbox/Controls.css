@@ -1,0 +1,49 @@
+/* ── Controls ──────────────────────────────────────────────────── */
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.controls__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-light);
+  margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-6)) var(--space-4);
+  padding: 0 var(--space-6);
+}
+
+.controls__tab {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.controls__tab:hover {
+  color: var(--text-secondary);
+}
+
+.controls__tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.controls__desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  line-height: var(--leading-relaxed);
+  margin-top: var(--space-2);
+}
+
+.controls__apply {
+  margin-top: var(--space-4);
+  width: 100%;
+}

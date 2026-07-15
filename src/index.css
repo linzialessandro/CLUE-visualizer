@@ -1,0 +1,18 @@
+/* ================================================================
+   CLUE Visualizer — Global Stylesheet
+   ================================================================ */
+
+/* Design system */
+@import './styles/tokens.css';
+@import './styles/typography.css';
+@import './styles/layout.css';
+@import './styles/animations.css';
+
+/* KaTeX overrides for consistent sizing */
+.katex {
+  font-size: 1em !important;
+}
+
+.katex-display {
+  margin: var(--space-4) 0;
+}

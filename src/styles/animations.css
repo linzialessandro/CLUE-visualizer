@@ -1,0 +1,136 @@
+/*  ================================================================
+    Animations — Micro-interactions and transitions
+    ================================================================ */
+
+/* ── Fade in up (scroll reveal) ────────────────────────────────── */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp var(--dur-slow) var(--ease-out) both;
+}
+
+/* ── Fade in ───────────────────────────────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn var(--dur-normal) var(--ease-out) both;
+}
+
+/* ── Pulse glow (active exchange highlight) ────────────────────── */
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsla(38, 92%, 50%, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px hsla(38, 92%, 50%, 0.25);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 1.2s var(--ease-out) infinite;
+}
+
+/* ── Sequence shift (value change in conception grid) ──────────── */
+
+@keyframes sequenceShift {
+  0% {
+    transform: scale(1.3);
+    background-color: var(--color-exchange-bg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sequence-shift {
+  animation: sequenceShift var(--dur-slow) var(--ease-spring) both;
+}
+
+/* ── Converge (match highlight) ────────────────────────────────── */
+
+@keyframes converge {
+  0% {
+    background-color: var(--color-exchange-bg);
+    transform: scale(1.15);
+  }
+  100% {
+    background-color: var(--color-match-bg);
+    transform: scale(1);
+  }
+}
+
+.converge {
+  animation: converge var(--dur-slower) var(--ease-out) both;
+}
+
+/* ── Spin (loading) ────────────────────────────────────────────── */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ── Slide in from left ────────────────────────────────────────── */
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft var(--dur-slow) var(--ease-out) both;
+}
+
+/* ── Number pop (stat value update) ────────────────────────────── */
+
+@keyframes numberPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.number-pop {
+  animation: numberPop var(--dur-normal) var(--ease-spring);
+}
+
+/* ── Stagger children ──────────────────────────────────────────── */
+
+.stagger-children > * {
+  animation: fadeInUp var(--dur-slow) var(--ease-out) both;
+}
+
+.stagger-children > *:nth-child(1)  { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2)  { animation-delay: 60ms; }
+.stagger-children > *:nth-child(3)  { animation-delay: 120ms; }
+.stagger-children > *:nth-child(4)  { animation-delay: 180ms; }
+.stagger-children > *:nth-child(5)  { animation-delay: 240ms; }
+.stagger-children > *:nth-child(6)  { animation-delay: 300ms; }
+.stagger-children > *:nth-child(7)  { animation-delay: 360ms; }
+.stagger-children > *:nth-child(8)  { animation-delay: 420ms; }
+.stagger-children > *:nth-child(9)  { animation-delay: 480ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 540ms; }

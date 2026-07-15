@@ -1,0 +1,13 @@
+/* ── Sandbox ───────────────────────────────────────────────────── */
+
+.sandbox {
+  width: 100%;
+}
+
+.sandbox-stats {
+  margin-top: var(--space-4);
+}
+
+.sandbox-stats .stat-row {
+  margin-top: 0;
+}

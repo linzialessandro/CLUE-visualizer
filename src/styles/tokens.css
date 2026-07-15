@@ -1,0 +1,123 @@
+/*  ================================================================
+    Design Tokens — Light / Paper-White Academic Theme
+    ================================================================
+    Premium academic aesthetic: warm off-white backgrounds, clean
+    typography, restrained accent palette, generous whitespace.
+    ================================================================ */
+
+:root {
+  /* ── Backgrounds ─────────────────────────────────────────────── */
+  --bg-page:       hsl(42, 28%, 96%);
+  --bg-surface:    hsl(0, 0%, 100%);
+  --bg-elevated:   hsl(0, 0%, 100%);
+  --bg-inset:      hsl(42, 20%, 94%);
+  --bg-hover:      hsl(42, 20%, 92%);
+
+  /* ── Text ────────────────────────────────────────────────────── */
+  --text-primary:    hsl(222, 22%, 14%);
+  --text-secondary:  hsl(222, 12%, 40%);
+  --text-tertiary:   hsl(222, 8%, 56%);
+  --text-inverse:    hsl(0, 0%, 100%);
+
+  /* ── Accent — Academic Blue ──────────────────────────────────── */
+  --accent:          hsl(215, 65%, 42%);
+  --accent-hover:    hsl(215, 65%, 34%);
+  --accent-light:    hsl(215, 60%, 93%);
+  --accent-muted:    hsl(215, 35%, 72%);
+
+  /* ── Semantic — Status Colors ────────────────────────────────── */
+  --color-match:     hsl(152, 52%, 40%);
+  --color-match-bg:  hsl(152, 50%, 92%);
+  --color-diverge:   hsl(350, 58%, 52%);
+  --color-diverge-bg:hsl(350, 55%, 94%);
+  --color-exchange:  hsl(38, 92%, 50%);
+  --color-exchange-bg:hsl(38, 90%, 92%);
+  --color-ideal:     hsl(265, 45%, 55%);
+
+  /* ── Chart Palette (8 distinguishable hues) ──────────────────── */
+  --chart-1: hsl(215, 65%, 50%);
+  --chart-2: hsl(152, 52%, 42%);
+  --chart-3: hsl(350, 58%, 52%);
+  --chart-4: hsl(38, 80%, 48%);
+  --chart-5: hsl(265, 50%, 55%);
+  --chart-6: hsl(185, 55%, 42%);
+  --chart-7: hsl(20, 65%, 50%);
+  --chart-8: hsl(310, 40%, 50%);
+
+  /* ── Borders ─────────────────────────────────────────────────── */
+  --border:        hsl(222, 12%, 87%);
+  --border-light:  hsl(222, 10%, 92%);
+  --border-focus:  var(--accent);
+
+  /* ── Shadows ─────────────────────────────────────────────────── */
+  --shadow-xs:  0 1px 2px  hsla(222, 22%, 14%, 0.04);
+  --shadow-sm:  0 1px 3px  hsla(222, 22%, 14%, 0.06),
+                0 1px 2px  hsla(222, 22%, 14%, 0.04);
+  --shadow-md:  0 4px 6px  hsla(222, 22%, 14%, 0.05),
+                0 2px 4px  hsla(222, 22%, 14%, 0.04);
+  --shadow-lg:  0 10px 20px hsla(222, 22%, 14%, 0.07),
+                0 4px 8px  hsla(222, 22%, 14%, 0.04);
+  --shadow-xl:  0 20px 40px hsla(222, 22%, 14%, 0.08),
+                0 8px 16px hsla(222, 22%, 14%, 0.04);
+
+  /* ── Radius ──────────────────────────────────────────────────── */
+  --radius-xs:  3px;
+  --radius-sm:  5px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-full: 9999px;
+
+  /* ── Spacing (4px base, powers-of-2 scale) ───────────────────── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ── Typography ──────────────────────────────────────────────── */
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Outfit', var(--font-body);
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  --text-xs:  0.75rem;    /* 12px */
+  --text-sm:  0.8125rem;  /* 13px */
+  --text-base: 0.9375rem; /* 15px */
+  --text-md:  1rem;       /* 16px */
+  --text-lg:  1.125rem;   /* 18px */
+  --text-xl:  1.3125rem;  /* 21px */
+  --text-2xl: 1.625rem;   /* 26px */
+  --text-3xl: 2rem;       /* 32px */
+  --text-4xl: 2.5rem;     /* 40px */
+
+  --leading-tight:  1.25;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.02em;
+
+  /* ── Transitions ─────────────────────────────────────────────── */
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in:    cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:   120ms;
+  --dur-normal: 220ms;
+  --dur-slow:   400ms;
+  --dur-slower: 600ms;
+
+  /* ── Z-index ─────────────────────────────────────────────────── */
+  --z-base:     1;
+  --z-dropdown: 10;
+  --z-sticky:   20;
+  --z-overlay:  30;
+  --z-modal:    40;
+  --z-tooltip:  50;
+}

@@ -1,0 +1,42 @@
+{
+  "name": "clue-visualizer",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Interactive companion for 'A formal model of Cooperative Learning for Understanding and Epistemic Progress' (Linzi, SN Social Sciences)",
+  "homepage": "https://linzialessandro.github.io/CLUE-visualizer/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/linzialessandro/CLUE-visualizer.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "katex": "^0.16.21",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/d3": "^7.4.3",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.3.6"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true
+  }
+}
