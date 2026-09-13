@@ -26,7 +26,7 @@ export default function Sandbox() {
   );
 
   const sim = useSimulation(defaultIndividuals);
-  const { history, currentStep, totalSteps } = sim;
+  const { history, currentStep, totalSteps, reset } = sim;
 
   // Get the state at the currently viewed step
   const stepIdx = Math.min(currentStep, totalSteps - 1);
@@ -37,9 +37,9 @@ export default function Sandbox() {
 
   const handleApply = useCallback(
     (newIndividuals: Individual[]) => {
-      sim.reset(newIndividuals);
+      reset(newIndividuals);
     },
-    [sim.reset],
+    [reset],
   );
 
   return (

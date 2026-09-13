@@ -8,9 +8,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          d3: ['d3'],
-          katex: ['katex'],
+        manualChunks(id) {
+          if (id.includes('node_modules/d3')) return 'd3'
+          if (id.includes('node_modules/katex')) return 'katex'
         },
       },
     },
