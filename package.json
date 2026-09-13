@@ -39,5 +39,9 @@
   "allowScripts": {
     "esbuild@0.28.1": true,
     "fsevents@2.3.3": true
+  },
+  "overrides": {
+    "@humanfs/node": ">=0.16.8",
+    "ajv": ">=6.14.0 <7"
   }
 }
