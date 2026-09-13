@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Individual } from '../engine/axiom';
 import {
   createHistory,
@@ -8,38 +8,33 @@ import {
 } from '../engine/simulation';
 
 export interface UseSimulationReturn {
-  /** The full simulation history */
   history: SimulationHistory;
-  /** The currently viewed time step index */
   currentStep: number;
-  /** Total number of computed steps */
   totalSteps: number;
-  /** Whether the simulation is auto-playing */
   isRunning: boolean;
-  /** Whether all agents have converged */
   isConverged: boolean;
-  /** Whether the simulation made no progress in the last step */
   isStalled: boolean;
-  /** Advance by one step */
+  /** True when the playhead is on the last computed step. */
+  atFrontier: boolean;
+  /** Play/step are meaningful: either history remains, or a new step can be computed. */
+  canPlay: boolean;
   step: () => void;
-  /** Run to completion */
   runAll: () => void;
-  /** Start/stop auto-play */
   toggleRun: () => void;
-  /** Jump to a specific time step */
   seekTo: (t: number) => void;
-  /** Reset the simulation with new individuals */
   reset: (individuals: Individual[]) => void;
-  /** Set the playback speed multiplier */
   setSpeed: (speed: number) => void;
-  /** Current playback speed */
   speed: number;
+}
+
+function isAllConverged(history: SimulationHistory): boolean {
+  const last = history.steps[history.steps.length - 1];
+  return last.cohort.convergedCount === last.individuals.length;
 }
 
 /**
  * Hook that manages the full simulation lifecycle:
- * - Steps, auto-play, rewind, seek
- * - Stores complete history for timeline scrubbing
+ * stepping, auto-play through recorded history and the frontier, rewind, seek.
  */
 export function useSimulation(initialIndividuals: Individual[]): UseSimulationReturn {
   const [history, setHistory] = useState<SimulationHistory>(() =>
@@ -48,8 +43,18 @@ export function useSimulation(initialIndividuals: Individual[]): UseSimulationRe
   const [currentStep, setCurrentStep] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(1);
+
   const rafRef = useRef<number | null>(null);
-  const lastFrameRef = useRef<number>(0);
+  const lastFrameRef = useRef(0);
+  const speedRef = useRef(speed);
+  const historyRef = useRef(history);
+  const currentStepRef = useRef(currentStep);
+  const isRunningRef = useRef(isRunning);
+
+  speedRef.current = speed;
+  historyRef.current = history;
+  currentStepRef.current = currentStep;
+  isRunningRef.current = isRunning;
 
   const totalSteps = history.steps.length;
   const lastStep = history.steps[totalSteps - 1];
@@ -58,94 +63,114 @@ export function useSimulation(initialIndividuals: Individual[]): UseSimulationRe
     totalSteps > 1 &&
     lastStep.exchanges.length === 0 &&
     !isConverged;
+  const atFrontier = currentStep >= totalSteps - 1;
+  const canPlay = !atFrontier || (!isConverged && !isStalled);
 
-  /* ── Single step ───────────────────────────────────────────── */
-  const step = useCallback(() => {
-    setHistory(prev => {
-      const prevLast = prev.steps[prev.steps.length - 1];
-      const allDone =
-        prevLast.cohort.convergedCount === prevLast.individuals.length;
-      if (allDone) return prev;
-
-      const next = advanceStep(prev);
-      if (next === prev) return prev; // no change
-      return next;
-    });
-    setCurrentStep(prev => prev + 1);
-  }, []);
-
-  /* ── Run all ───────────────────────────────────────────────── */
-  const runAll = useCallback(() => {
-    setHistory(prev => {
-      const result = runToCompletion(prev);
-      setCurrentStep(result.steps.length - 1);
-      return result;
-    });
-    setIsRunning(false);
-  }, []);
-
-  /* ── Auto-play toggle ──────────────────────────────────────── */
-  const toggleRun = useCallback(() => {
-    setIsRunning(prev => {
-      const next = !prev;
-      if (next) {
-        // Start auto-play
-        lastFrameRef.current = performance.now();
-        const loop = (now: number) => {
-          const elapsed = now - lastFrameRef.current;
-          // Speed: steps per second (1x = 2 steps/sec, 5x = 10/sec, etc.)
-          const interval = 1000 / (2 * speed);
-          if (elapsed >= interval) {
-            lastFrameRef.current = now;
-            setHistory(prev => {
-              const prevLast = prev.steps[prev.steps.length - 1];
-              const allDone =
-                prevLast.cohort.convergedCount === prevLast.individuals.length;
-              if (allDone || prevLast.exchanges.length === 0) {
-                setIsRunning(false);
-                return prev;
-              }
-              const advanced = advanceStep(prev);
-              if (advanced === prev) {
-                setIsRunning(false);
-                return prev;
-              }
-              setCurrentStep(advanced.steps.length - 1);
-              return advanced;
-            });
-          }
-          rafRef.current = requestAnimationFrame(loop);
-        };
-        rafRef.current = requestAnimationFrame(loop);
-      } else {
-        // Stop
-        if (rafRef.current !== null) {
-          cancelAnimationFrame(rafRef.current);
-          rafRef.current = null;
-        }
-      }
-      return next;
-    });
-  }, [speed]);
-
-  /* ── Seek ──────────────────────────────────────────────────── */
-  const seekTo = useCallback(
-    (t: number) => {
-      const clamped = Math.max(0, Math.min(t, totalSteps - 1));
-      setCurrentStep(clamped);
-    },
-    [totalSteps],
-  );
-
-  /* ── Reset ─────────────────────────────────────────────────── */
-  const reset = useCallback((individuals: Individual[]) => {
+  const stopLoop = useCallback(() => {
     if (rafRef.current !== null) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
+    isRunningRef.current = false;
     setIsRunning(false);
-    setHistory(createHistory(individuals));
+  }, []);
+
+  /**
+   * Advance the playhead by one: replay recorded history if available,
+   * otherwise compute a new frontier step. Returns whether playback should continue.
+   */
+  const advancePlayhead = useCallback((): boolean => {
+    const hist = historyRef.current;
+    const cur = currentStepRef.current;
+    const lastIdx = hist.steps.length - 1;
+
+    if (cur < lastIdx) {
+      const next = cur + 1;
+      currentStepRef.current = next;
+      setCurrentStep(next);
+      return true;
+    }
+
+    if (isAllConverged(hist)) return false;
+
+    const nextHist = advanceStep(hist);
+    if (nextHist === hist) return false;
+
+    historyRef.current = nextHist;
+    setHistory(nextHist);
+    const newIdx = nextHist.steps.length - 1;
+    currentStepRef.current = newIdx;
+    setCurrentStep(newIdx);
+
+    const produced = nextHist.steps[newIdx];
+    const remaining =
+      produced.cohort.convergedCount < produced.individuals.length;
+    // A step with no exchanges and remaining distance is a stall: show it, then stop.
+    return remaining && produced.exchanges.length > 0;
+  }, []);
+
+  const step = useCallback(() => {
+    advancePlayhead();
+  }, [advancePlayhead]);
+
+  const runAll = useCallback(() => {
+    stopLoop();
+    setHistory(prev => {
+      const result = runToCompletion(prev);
+      historyRef.current = result;
+      const end = result.steps.length - 1;
+      currentStepRef.current = end;
+      setCurrentStep(end);
+      return result;
+    });
+  }, [stopLoop]);
+
+  const toggleRun = useCallback(() => {
+    if (isRunningRef.current) {
+      stopLoop();
+      return;
+    }
+
+    isRunningRef.current = true;
+    setIsRunning(true);
+    lastFrameRef.current = performance.now();
+
+    const loop = (now: number) => {
+      if (!isRunningRef.current) return;
+      const interval = 1000 / (2 * speedRef.current);
+      if (now - lastFrameRef.current >= interval) {
+        lastFrameRef.current = now;
+        const more = advancePlayhead();
+        if (!more) {
+          stopLoop();
+          return;
+        }
+      }
+      rafRef.current = requestAnimationFrame(loop);
+    };
+    rafRef.current = requestAnimationFrame(loop);
+  }, [advancePlayhead, stopLoop]);
+
+  const seekTo = useCallback((t: number) => {
+    const lastIdx = historyRef.current.steps.length - 1;
+    const clamped = Math.max(0, Math.min(t, lastIdx));
+    currentStepRef.current = clamped;
+    setCurrentStep(clamped);
+  }, []);
+
+  const reset = useCallback((individuals: Individual[]) => {
+    stopLoop();
+    const next = createHistory(individuals);
+    historyRef.current = next;
+    currentStepRef.current = 0;
+    setHistory(next);
     setCurrentStep(0);
+  }, [stopLoop]);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   return useMemo(
@@ -156,6 +181,8 @@ export function useSimulation(initialIndividuals: Individual[]): UseSimulationRe
       isRunning,
       isConverged,
       isStalled,
+      atFrontier,
+      canPlay,
       step,
       runAll,
       toggleRun,
@@ -165,8 +192,8 @@ export function useSimulation(initialIndividuals: Individual[]): UseSimulationRe
       speed,
     }),
     [
-      history, currentStep, totalSteps, isRunning, isConverged,
-      isStalled, step, runAll, toggleRun, seekTo, reset, speed,
+      history, currentStep, totalSteps, isRunning, isConverged, isStalled,
+      atFrontier, canPlay, step, runAll, toggleRun, seekTo, reset, speed,
     ],
   );
 }

@@ -8,11 +8,8 @@ export default function Footer() {
           <div className="footer__citation">
             <h4 className="footer__heading">Cite this work</h4>
             <p className="footer__text">
-              Linzi, A. (2025). A formal model of Cooperative Learning for Understanding
-              and Epistemic Progress. <em>SN Social Sciences</em>. Springer.
-            </p>
-            <p className="footer__text footer__text--mono">
-              DOI: [available upon publication]
+              Linzi, A. (2026). A formal model of Cooperative Learning for Understanding
+              and Epistemic Progress. Manuscript submitted to <em>SN Social Sciences</em>.
             </p>
           </div>
 
@@ -21,12 +18,12 @@ export default function Footer() {
             <ul className="footer__list">
               <li>
                 <a href="https://github.com/linzialessandro/CLUE-visualizer" target="_blank" rel="noopener noreferrer">
-                  GitHub Repository
+                  Source repository
                 </a>
               </li>
               <li>
                 <a href="mailto:alessandro.linzi.phd@icloud.com">
-                  Contact Author
+                  Correspondence
                 </a>
               </li>
             </ul>

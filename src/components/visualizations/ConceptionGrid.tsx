@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { Individual } from '../../engine/axiom';
-import { minDivergingIndex } from '../../engine/baire-metric';
+import { formatDistance, minDivergingIndex } from '../../engine/baire-metric';
 import type { ExchangeEvent } from '../../engine/axiom';
 import MathBlock from '../shared/MathBlock';
 import './ConceptionGrid.css';
@@ -113,7 +113,7 @@ export default function ConceptionGrid({ individuals, exchanges = [], compact = 
                   {/* Distance */}
                   <td className="cg-dist">
                     <span className={`cg-dist__value ${isConverged ? 'cg-dist__value--zero' : ''}`}>
-                      {isConverged ? '0' : d.toFixed(3)}
+                      {formatDistance(d)}
                     </span>
                   </td>
                 </tr>

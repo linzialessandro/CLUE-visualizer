@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Individual } from '../../engine/axiom';
-import { distance, minDivergingIndex } from '../../engine/baire-metric';
+import { distance, formatDistance, minDivergingIndex } from '../../engine/baire-metric';
 import { executeStep } from '../../engine/axiom';
 import ConceptionGrid from '../visualizations/ConceptionGrid';
 import MathBlock from '../shared/MathBlock';
@@ -63,9 +63,9 @@ export default function WorkedExample() {
         />
         <div className="we-exchange-arrow" aria-hidden="true">
           {isConverged ? (
-            <span className="we-check">✓</span>
+            <span className="we-check" aria-label="converged">=</span>
           ) : (
-            <span className="we-arrows">⇋</span>
+            <span className="we-arrows" aria-hidden="true">⇋</span>
           )}
         </div>
         <AgentCard
@@ -93,14 +93,16 @@ export default function WorkedExample() {
           <div className="stat">
             <span className="stat__label">Status</span>
             <span className={`badge ${isConverged ? 'badge--converged' : 'badge--active'}`}>
-              {isConverged ? '✓ Converged' : 'Active'}
+              {isConverged ? 'Converged' : 'Active'}
             </span>
           </div>
         </div>
         <div className="btn-group">
-          <button className="btn btn--primary" onClick={handleStep} disabled={isConverged}>
-            {isConverged ? 'Converged' : 'Exchange'}
-          </button>
+          {!isConverged && (
+            <button className="btn btn--primary" onClick={handleStep}>
+              Exchange
+            </button>
+          )}
           <button className="btn" onClick={handleReset}>Reset</button>
         </div>
       </div>
@@ -159,7 +161,7 @@ function AgentCard({
             <MathBlock tex={`d(C_{${label}}, C_{${label}}^*)`} />
           </span>
           <span className={`stat__value ${isConverged ? 'stat__value--zero' : ''}`}>
-            {isConverged ? '0' : d.toFixed(3)}
+            {formatDistance(d)}
           </span>
         </div>
         {!isConverged && (

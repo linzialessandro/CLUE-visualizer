@@ -64,3 +64,17 @@ export function matchFraction(current: Conception, ideal: Conception): number {
   if (mask.length === 0) return 1;
   return mask.filter(Boolean).length / mask.length;
 }
+
+/**
+ * Format a Baire distance for display.
+ * Exact values of the form 1/(k+1) are shown as rationals (1, 1/2, 1/3, …).
+ */
+export function formatDistance(d: number): string {
+  if (d === 0) return '0';
+  const inv = 1 / d;
+  const rounded = Math.round(inv);
+  if (Math.abs(inv - rounded) < 1e-9) {
+    return rounded === 1 ? '1' : `1/${rounded}`;
+  }
+  return d.toFixed(3);
+}

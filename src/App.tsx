@@ -22,10 +22,10 @@ export default function App() {
         {/* Section 1: Worked Example */}
         <section className="section" id="worked-example">
           <div className="section__header">
-            <h2 className="section__title">Worked Example</h2>
+            <h2 className="section__title">Worked example</h2>
             <p className="section__subtitle">
-              Paper §3.1 — Step through the exchange between two agents
-              and observe convergence to their ideal conceptions.
+              Section 3.1 of the paper. Step through the single mutually beneficial
+              exchange between two agents and observe convergence to their ideal conceptions.
             </p>
           </div>
           <WorkedExample />
@@ -34,10 +34,10 @@ export default function App() {
         {/* Section 2: Simulation Sandbox */}
         <section className="section" id="sandbox">
           <div className="section__header">
-            <h2 className="section__title">Simulation Sandbox</h2>
+            <h2 className="section__title">Simulation sandbox</h2>
             <p className="section__subtitle">
-              Explore convergence dynamics with configurable scenarios.
-              Select a preset or generate custom communities.
+              Section 3.3 and extensions. Presets reproduce the paper’s multi-round
+              illustration; custom communities remain axiom-compatible by construction.
             </p>
           </div>
           <Sandbox />

@@ -1,5 +1,5 @@
 /**
- * Axiom 1 — Necessary and Reciprocal Exchange
+ * Core axiom — Necessary and Reciprocal Exchange
  *
  * For each individual i, at each time t, if C_i* ≠ C_i(t), then there exists
  * an individual j such that C_j* ≠ C_j(t) and the exchange at index
@@ -12,7 +12,7 @@
  * value at that position. This is the only configuration where a single-index
  * swap can strictly decrease both distances.
  *
- * Reference: CLUE paper, Section 3.2 — The Core Axiom and Convergence Theorem
+ * Reference: CLUE paper, Section 3 — The core axiom and convergence theorem
  */
 
 import { type Conception, distance, minDivergingIndex } from './baire-metric';

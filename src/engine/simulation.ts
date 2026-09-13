@@ -74,6 +74,9 @@ function computeSnapshots(t: number, individuals: Individual[]): Snapshot[] {
 
 function computeCohort(t: number, snapshots: Snapshot[]): CohortStats {
   const ds = snapshots.map(s => s.d);
+  if (ds.length === 0) {
+    return { t, mean: 0, q25: 0, q50: 0, q75: 0, min: 0, max: 0, convergedCount: 0 };
+  }
   const { q25, q50, q75 } = quantiles(ds);
   const convergedCount = snapshots.filter(s => s.d === 0).length;
   return {

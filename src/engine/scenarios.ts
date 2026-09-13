@@ -20,10 +20,10 @@ export interface Scenario {
 
 const paperExample: Scenario = {
   id: 'paper-example',
-  name: 'Paper §3.1 — Two Agents',
+  name: 'Paper §3.1 — Two agents',
   description:
-    'Exact reproduction of the worked example from Section 3.1. ' +
-    'Two agents converge to their ideals in a single exchange.',
+    'Worked example from Section 3.1 of the paper. ' +
+    'Two agents converge to their ideals in a single mutually beneficial exchange.',
   individuals: [
     {
       id: 0,
@@ -43,11 +43,11 @@ const paperExample: Scenario = {
 /* ------------------------------------------------------------------ */
 
 const twoStepChain: Scenario = {
-  id: 'two-step-chain',
-  name: 'Two-Step Chain — 4 Agents',
+  id: 'paper-3-3',
+  name: 'Paper §3.3 — Four agents',
   description:
-    'Two pairs exchange at k=0 in step 1, then at k=1 in step 2. ' +
-    'Demonstrates sequential convergence.',
+    'Multi-round illustration from Section 3.3. Two disjoint pairs exchange ' +
+    'at k = 0, then at k = 1. Distances: 1 → 1/2 → 0.',
   individuals: [
     {
       id: 0,
@@ -78,11 +78,10 @@ const twoStepChain: Scenario = {
 
 const communitySix: Scenario = {
   id: 'community-six',
-  name: 'Community of Six',
+  name: 'Community of six',
   description:
-    'Six agents with staggered convergence times: one pair converges ' +
-    'in 1 step, another in 2, and a third in 3. Shows transient ' +
-    'group dynamics.',
+    'Six agents in three complementary pairs, converging in 1, 2, and 3 steps. ' +
+    'Illustrates transient grouping: pairs dissolve once their mutual need is exhausted.',
   individuals: [
     // Pair A: diverge at k=0,1,2 → converge in 3 steps
     {
@@ -126,10 +125,10 @@ const communitySix: Scenario = {
 
 const largeCommunity: Scenario = {
   id: 'large-community',
-  name: 'Large Community — 10 Agents',
+  name: 'Community of ten',
   description:
     'Ten agents with varying depths of divergence. ' +
-    'Shows complex convergence patterns across multiple time steps.',
+    'A larger axiom-compatible community for inspecting cohort statistics.',
   individuals: [
     // Pair 1: diverge at k=0,1,2,3 → 4 steps
     { id: 0, idealConception: [1,2,3,4,5,6,7,8], currentConception: [2,1,4,3,5,6,7,8] },

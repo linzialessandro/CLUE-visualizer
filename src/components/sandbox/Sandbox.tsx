@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import type { Individual } from '../../engine/axiom';
+import { formatDistance } from '../../engine/baire-metric';
 import { SCENARIOS } from '../../engine/scenarios';
 import { useSimulation } from '../../hooks/useSimulation';
 import Controls from './Controls';
@@ -14,7 +15,7 @@ import './Sandbox.css';
  * Full simulation sandbox with controls, visualizations, and timeline.
  */
 export default function Sandbox() {
-  const defaultScenario = SCENARIOS.find(s => s.id === 'community-six')!;
+  const defaultScenario = SCENARIOS.find(s => s.id === 'paper-3-3') ?? SCENARIOS[0];
   const defaultIndividuals = useMemo(() =>
     defaultScenario.individuals.map(ind => ({
       ...ind,
@@ -38,7 +39,7 @@ export default function Sandbox() {
     (newIndividuals: Individual[]) => {
       sim.reset(newIndividuals);
     },
-    [sim],
+    [sim.reset],
   );
 
   return (
@@ -66,7 +67,7 @@ export default function Sandbox() {
             <div className="stat-row" style={{ marginTop: 'var(--space-3)' }}>
               <div className="stat">
                 <span className="stat__label">Mean d</span>
-                <span className="stat__value">{cohort.mean.toFixed(3)}</span>
+                <span className="stat__value">{formatDistance(cohort.mean)}</span>
               </div>
               <div className="stat">
                 <span className="stat__label">Exchanges</span>
@@ -91,18 +92,18 @@ export default function Sandbox() {
           {/* Charts row */}
           <div className="chart-grid">
             <div className="card">
-              <div className="card__title">Distance to Ideal</div>
+              <div className="card__title">Distance to ideal</div>
               <DistanceChart history={history} currentStep={stepIdx} />
             </div>
             <div className="card">
-              <div className="card__title">Interaction Network</div>
+              <div className="card__title">Interaction network</div>
               <NetworkGraph history={history} currentStep={stepIdx} />
             </div>
           </div>
 
           {/* Heatmap (full width) */}
           <div className="card">
-            <div className="card__title">Distance Heatmap</div>
+            <div className="card__title">Distance heatmap</div>
             <DistanceHeatmap history={history} currentStep={stepIdx} />
           </div>
 

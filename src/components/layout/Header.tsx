@@ -16,7 +16,7 @@ export default function Header() {
             </div>
             <div>
               <h1 className="header__title">CLUE Model</h1>
-              <p className="header__tagline">Interactive Companion</p>
+              <p className="header__tagline">Interactive companion</p>
             </div>
           </div>
 
@@ -26,20 +26,22 @@ export default function Header() {
                 A formal model of Cooperative Learning for Understanding and Epistemic Progress
               </p>
               <p className="header__author">
-                Alessandro Linzi — <em>SN Social Sciences</em> (Springer)
-              </p>
-              <p className="header__doi">
-                DOI: <a href="#" className="header__doi-link">[available upon publication]</a>
+                Alessandro Linzi — manuscript submitted to <em>SN Social Sciences</em>
               </p>
             </div>
             <div className="header__formula">
               <MathBlock
-                tex="d(x, y) = \frac{1}{\min\{n \in \mathbb{N} \mid x_n \neq y_n\} + 1}"
+                tex="d(x,y)=0\text{ if }x=y;\ \ \tfrac{1}{k+1}\text{ otherwise}"
                 display={false}
               />
             </div>
           </div>
         </div>
+        <p className="header__note">
+          This page illustrates axiom-compatible trajectories of the CLUE model
+          (Sections 3.1 and 3.3 of the paper). It is a computational companion,
+          not a statistical fit to data; the model has no free parameters.
+        </p>
       </div>
     </header>
   );

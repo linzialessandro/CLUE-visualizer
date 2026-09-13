@@ -115,6 +115,47 @@ body {
   grid-template-columns: 1fr;
 }
 
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.chart-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.chart-legend__line {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  border-top: 2px solid var(--accent);
+}
+
+.chart-legend__line--agent {
+  border-top-color: #3366cc;
+}
+
+.chart-legend__line--mean {
+  border-top: 2px dashed #1c2430;
+}
+
+.chart-legend__swatch {
+  display: inline-block;
+  width: 14px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.chart-legend__swatch--iqr {
+  background: #d6e4f5;
+}
+
 /* ── Controls ──────────────────────────────────────────────────── */
 
 .control-group {
@@ -195,6 +236,24 @@ body {
 
 .btn:active {
   transform: scale(0.97);
+}
+
+.btn:disabled,
+.btn:disabled:hover {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-tertiary);
+}
+
+.btn--primary:disabled,
+.btn--primary:disabled:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+  opacity: 0.45;
 }
 
 .btn--primary {

@@ -6,11 +6,17 @@ interface TimelineProps {
 }
 
 /**
- * Scrubable timeline bar with playback controls.
+ * Scrubable timeline with playback controls.
+ * Play replays recorded history from the playhead, then computes new steps
+ * if the frontier has not yet converged.
  */
 export default function Timeline({ sim }: TimelineProps) {
-  const { currentStep, totalSteps, isRunning, isConverged, isStalled, step, toggleRun, seekTo, runAll, speed, setSpeed } = sim;
-  const maxStep = totalSteps - 1;
+  const {
+    currentStep, totalSteps, isRunning, isConverged, isStalled,
+    atFrontier, canPlay, step, toggleRun, seekTo, runAll, speed, setSpeed,
+  } = sim;
+  const maxStep = Math.max(0, totalSteps - 1);
+  const playhead = Math.min(currentStep, maxStep);
 
   return (
     <div className="timeline">
@@ -20,41 +26,47 @@ export default function Timeline({ sim }: TimelineProps) {
           className="timeline__slider"
           min={0}
           max={maxStep}
-          value={Math.min(currentStep, maxStep)}
+          value={playhead}
           onChange={e => seekTo(Number(e.target.value))}
-          aria-label="Timeline scrubber"
+          aria-label="Timeline playhead"
         />
         <div className="timeline__labels">
-          <span className="mono">t = {Math.min(currentStep, maxStep)}</span>
-          <span className="mono">/ {maxStep}</span>
+          <span className="mono">t = {playhead}</span>
+          <span className="mono">{maxStep === 0 ? 't = 0' : `horizon ${maxStep}`}</span>
         </div>
       </div>
 
       <div className="timeline__controls">
         <div className="btn-group">
           <button
-            className="btn btn--icon"
-            onClick={step}
-            disabled={isConverged || isStalled}
-            title="Single step"
-            aria-label="Step forward"
+            className="btn btn--sm"
+            onClick={() => seekTo(0)}
+            disabled={playhead === 0}
+            title="Return playhead to t = 0"
           >
-            ⏭
+            t = 0
           </button>
           <button
-            className={`btn btn--icon ${isRunning ? 'btn--primary' : ''}`}
-            onClick={toggleRun}
-            disabled={isConverged || isStalled}
-            title={isRunning ? 'Pause' : 'Play'}
-            aria-label={isRunning ? 'Pause' : 'Play'}
+            className="btn btn--sm"
+            onClick={step}
+            disabled={!canPlay && !isRunning}
+            title="Advance one step"
           >
-            {isRunning ? '⏸' : '▶'}
+            Step
+          </button>
+          <button
+            className={`btn btn--sm ${isRunning ? 'btn--primary' : ''}`}
+            onClick={toggleRun}
+            disabled={!canPlay && !isRunning}
+            title={isRunning ? 'Pause' : 'Play from playhead'}
+          >
+            {isRunning ? 'Pause' : 'Play'}
           </button>
           <button
             className="btn btn--sm"
             onClick={runAll}
             disabled={isConverged || isStalled}
-            title="Run to completion"
+            title="Compute the trajectory to convergence"
           >
             Run all
           </button>
@@ -67,7 +79,8 @@ export default function Timeline({ sim }: TimelineProps) {
             className="control-select"
             value={speed}
             onChange={e => setSpeed(Number(e.target.value))}
-            style={{ width: 64 }}
+            style={{ width: 72 }}
+            aria-label="Playback speed"
           >
             <option value={0.5}>0.5×</option>
             <option value={1}>1×</option>
@@ -77,9 +90,9 @@ export default function Timeline({ sim }: TimelineProps) {
           </select>
         </div>
 
-        <div className="timeline__status">
-          {isConverged && <span className="badge badge--converged">✓ All Converged</span>}
-          {isStalled && <span className="badge badge--stalled">⚠ No exchanges available</span>}
+        <div className="timeline__status" aria-live="polite">
+          {atFrontier && isConverged && <span className="badge badge--converged">All converged</span>}
+          {atFrontier && isStalled && <span className="badge badge--stalled">No mutually beneficial exchange</span>}
         </div>
       </div>
     </div>

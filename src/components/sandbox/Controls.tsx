@@ -11,7 +11,7 @@ interface ControlsProps {
  * Sidebar parameter panel for the sandbox simulation.
  */
 export default function Controls({ onApply }: ControlsProps) {
-  const [scenarioId, setScenarioId] = useState('community-six');
+  const [scenarioId, setScenarioId] = useState('paper-3-3');
   const [N, setN] = useState(6);
   const [L, setL] = useState(6);
   const [V, setV] = useState(6);
@@ -64,7 +64,17 @@ export default function Controls({ onApply }: ControlsProps) {
             id="scenario-select"
             className="control-select"
             value={scenarioId}
-            onChange={e => setScenarioId(e.target.value)}
+            onChange={e => {
+              const id = e.target.value;
+              setScenarioId(id);
+              const scenario = SCENARIOS.find(s => s.id === id);
+              if (!scenario) return;
+              onApply(scenario.individuals.map(ind => ({
+                ...ind,
+                currentConception: [...ind.currentConception],
+                idealConception: [...ind.idealConception],
+              })));
+            }}
           >
             {SCENARIOS.map(s => (
               <option key={s.id} value={s.id}>{s.name}</option>
@@ -103,7 +113,11 @@ export default function Controls({ onApply }: ControlsProps) {
               min={2}
               max={20}
               value={L}
-              onChange={e => setL(Math.max(2, parseInt(e.target.value) || 2))}
+              onChange={e => {
+                const next = Math.max(2, parseInt(e.target.value) || 2);
+                setL(next);
+                setDepth(d => Math.min(d, next));
+              }}
             />
           </div>
 
@@ -153,7 +167,7 @@ export default function Controls({ onApply }: ControlsProps) {
       )}
 
       <button className="btn btn--primary controls__apply" onClick={handleApply}>
-        Apply & Reset
+        Apply and reset
       </button>
     </div>
   );

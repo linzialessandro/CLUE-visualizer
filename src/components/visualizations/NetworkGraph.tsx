@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import type { SimulationHistory } from '../../engine/simulation';
 import { distance } from '../../engine/baire-metric';
+import { useContainerWidth } from '../../hooks/useContainerWidth';
 
 const CHART_COLORS = [
   '#3366cc', '#2d9e5f', '#d94452', '#d4952e',
@@ -14,30 +15,25 @@ interface NetworkGraphProps {
   height?: number;
 }
 
-interface NodeDatum extends d3.SimulationNodeDatum {
+interface NodeDatum {
   id: number;
   d: number;
   converged: boolean;
-}
-
-interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {
-  count: number;
-  lastT: number;
+  x: number;
+  y: number;
 }
 
 /**
- * Force-directed network graph showing agent interactions.
- * Nodes = agents (sized by progress), Edges = exchanges.
+ * Circular layout of agents. Edges record mutually beneficial exchanges
+ * up to the current playhead. Positions are deterministic so scrubbing
+ * the timeline does not reshuffle the figure.
  */
 export default function NetworkGraph({ history, currentStep, height = 320 }: NetworkGraphProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const { ref: containerRef, width } = useContainerWidth<HTMLDivElement>();
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (!svgRef.current || !containerRef.current) return;
-
-    const containerWidth = containerRef.current.clientWidth;
-    const width = containerWidth;
+    if (!svgRef.current || width < 40) return;
 
     const svg = d3.select(svgRef.current);
     svg.attr('width', width).attr('height', height);
@@ -50,17 +46,25 @@ export default function NetworkGraph({ history, currentStep, height = 320 }: Net
     const currentStepData = steps[stepIdx];
     const individuals = currentStepData.individuals;
 
-    // Build nodes
-    const nodes: NodeDatum[] = individuals.map(ind => {
-      const d_val = distance(ind.currentConception, ind.idealConception);
+    const cx = width / 2;
+    const cy = height / 2;
+    const radius = Math.max(40, Math.min(width, height) * 0.32);
+    const n = individuals.length;
+
+    const nodes: NodeDatum[] = individuals.map((ind, i) => {
+      const angle = n === 0 ? 0 : (2 * Math.PI * i) / n - Math.PI / 2;
+      const dVal = distance(ind.currentConception, ind.idealConception);
       return {
         id: ind.id,
-        d: d_val,
-        converged: d_val === 0,
+        d: dVal,
+        converged: dVal === 0,
+        x: cx + radius * Math.cos(angle),
+        y: cy + radius * Math.sin(angle),
       };
     });
 
-    // Build links from all exchanges up to currentStep
+    const nodeByIndex = new Map(nodes.map((node, i) => [i, node]));
+
     const linkMap = new Map<string, { source: number; target: number; count: number; lastT: number }>();
     for (let t = 0; t <= stepIdx; t++) {
       for (const ex of steps[t].exchanges) {
@@ -74,80 +78,56 @@ export default function NetworkGraph({ history, currentStep, height = 320 }: Net
         }
       }
     }
-    const links: LinkDatum[] = Array.from(linkMap.values());
-
-    // Force simulation
-    const simulation = d3.forceSimulation<NodeDatum>(nodes)
-      .force('link', d3.forceLink<NodeDatum, LinkDatum>(links).id(d => d.id).distance(80))
-      .force('charge', d3.forceManyBody().strength(-200))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(d => radiusFn(d as NodeDatum) + 4));
+    const links = Array.from(linkMap.values());
 
     const g = svg.append('g');
 
-    // Links
-    const link = g
-      .selectAll('line')
+    g.selectAll('line')
       .data(links)
       .join('line')
+      .attr('x1', d => nodeByIndex.get(d.source)?.x ?? 0)
+      .attr('y1', d => nodeByIndex.get(d.source)?.y ?? 0)
+      .attr('x2', d => nodeByIndex.get(d.target)?.x ?? 0)
+      .attr('y2', d => nodeByIndex.get(d.target)?.y ?? 0)
       .attr('stroke', d => {
         const recency = 1 - (stepIdx - d.lastT) / Math.max(stepIdx, 1);
-        return d3.interpolateRgb('var(--border-light)', 'var(--color-exchange)')(Math.max(0.2, recency));
+        return d3.interpolateRgb('#d8dce3', '#e0a020')(Math.max(0.25, recency));
       })
       .attr('stroke-width', d => Math.min(d.count * 1.5 + 0.5, 4))
-      .attr('stroke-opacity', 0.6);
+      .attr('stroke-opacity', 0.85);
 
-    // Nodes
-    const node = g
-      .selectAll('circle')
+    g.selectAll('circle')
       .data(nodes)
       .join('circle')
-      .attr('r', d => radiusFn(d))
-      .attr('fill', d => d.converged ? 'var(--color-match)' : CHART_COLORS[d.id % CHART_COLORS.length])
-      .attr('stroke', d => d.converged ? 'var(--color-match)' : 'var(--bg-surface)')
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y)
+      .attr('r', d => (d.converged ? 6 : 8 + d.d * 12))
+      .attr('fill', d => (d.converged ? '#2d9e5f' : CHART_COLORS[d.id % CHART_COLORS.length]))
+      .attr('stroke', '#ffffff')
       .attr('stroke-width', 2)
-      .attr('opacity', d => d.converged ? 0.5 : 1);
+      .attr('opacity', d => (d.converged ? 0.65 : 1));
 
-    // Labels
-    const label = g
-      .selectAll('text')
+    g.selectAll('text')
       .data(nodes)
       .join('text')
       .text(d => `i${d.id}`)
+      .attr('x', d => d.x)
+      .attr('y', d => d.y)
+      .attr('dy', d => (d.converged ? 18 : 8 + d.d * 12 + 12))
       .attr('font-size', '10px')
-      .attr('font-family', 'var(--font-mono)')
-      .attr('fill', 'var(--text-secondary)')
-      .attr('text-anchor', 'middle')
-      .attr('dy', d => radiusFn(d) + 14);
-
-    simulation.on('tick', () => {
-      link
-        .attr('x1', d => ((d.source as NodeDatum).x ?? 0))
-        .attr('y1', d => ((d.source as NodeDatum).y ?? 0))
-        .attr('x2', d => ((d.target as NodeDatum).x ?? 0))
-        .attr('y2', d => ((d.target as NodeDatum).y ?? 0));
-
-      node
-        .attr('cx', d => d.x ?? 0)
-        .attr('cy', d => d.y ?? 0);
-
-      label
-        .attr('x', d => d.x ?? 0)
-        .attr('y', d => d.y ?? 0);
-    });
-
-    return () => { simulation.stop(); };
-  }, [history, currentStep, height]);
+      .attr('font-family', 'ui-monospace, SFMono-Regular, Menlo, monospace')
+      .attr('fill', '#5c6470')
+      .attr('text-anchor', 'middle');
+  }, [history, currentStep, height, width]);
 
   return (
     <div ref={containerRef} style={{ width: '100%' }}>
-      <svg ref={svgRef} style={{ width: '100%', display: 'block' }} />
+      <svg ref={svgRef} role="img" aria-label="Interaction network of agents" style={{ width: '100%', display: 'block' }} />
+      <div className="chart-legend">
+        <span className="chart-legend__item">Node size ∝ remaining distance</span>
+        <span className="chart-legend__item">Green = converged</span>
+        <span className="chart-legend__item">Edge = exchange (thicker = more frequent)</span>
+      </div>
     </div>
   );
-}
-
-/** Node radius based on progress: bigger = more distance remaining */
-function radiusFn(d: NodeDatum): number {
-  if (d.converged) return 6;
-  return 8 + d.d * 14; // 8px when d≈0, up to 22px when d=1
 }
